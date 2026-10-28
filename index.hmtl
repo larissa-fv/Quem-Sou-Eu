@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quem Sou Eu? Os Vigias de Hogwarts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap">
+<style>
+:root{--bg:#e4e8f3;--card:#f7f8fc;--ink:#1f1a3a;--acc:#5b3fb0;--gold:#a8700a;--ok:#1f8a5b;--bad:#c23a2e;--bd:#b9bfd8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#120e27;--card:#1e1840;--ink:#efe9ff;--acc:#a98bff;--gold:#f2b84b;--ok:#4cc38a;--bad:#ff6b5e;--bd:#3a3170;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#120e27;--card:#1e1840;--ink:#efe9ff;--acc:#a98bff;--gold:#f2b84b;--ok:#4cc38a;--bad:#ff6b5e;--bd:#3a3170;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:720px;margin:0 auto;padding:16px}
+h1,h2{font-family:Cinzel,Georgia,serif;margin:.3em 0;text-align:center}
+h1{font-size:2rem;font-weight:800}h2{font-size:1.3rem}
+p{margin:.4em 0}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:14px;margin:10px 0}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:700;min-height:48px}
+:root:not([data-theme="light"]) .btn{color:#150f30}
+.btn.alt{background:var(--card);color:var(--ink);border:2px solid var(--bd)}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1 1 180px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;margin-bottom:6px;flex-wrap:wrap}
+.who{text-align:center;font-family:Cinzel,Georgia,serif;font-size:1.5rem;margin:6px 0}
+.clue{border-left:6px solid var(--gold);padding:10px 12px;margin:8px 0;background:var(--card);border-radius:10px;animation:in .35s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.opt{background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:14px 8px;font-weight:700;min-height:56px}
+.opt.ok{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.no{border-color:var(--bad)}
+.scene{font-size:4.2rem;text-align:center;line-height:1.2;margin:4px 0}
+.pts{text-align:center;font-weight:800;font-size:1.2rem}
+.pts.g{color:var(--ok)}.pts.b{color:var(--bad)}
+.rv{display:flex;gap:10px;align-items:center;margin:6px 0}.rv span:first-child{font-size:1.8rem}
+.rv small{display:block;opacity:.8}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@media(max-width:420px){.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const TN=["Equipe Coruja 🦉","Equipe Fênix 🔥"];
+const OLD=[
+{n:"DNS",e:"📖🌐",c:["Eu traduzo nomes em endereços.","Sou consultado toda vez que você digita um site.","Se me usarem com nomes enormes e sem sentido, pode ser um túnel escondendo dados."],a:"A lista telefônica da biblioteca de Hogwarts.",x:"9.1: o túnel de DNS esconde dados roubados dentro de perguntas."},
+{n:"ARP",e:"🎭🚪",c:["Só funciono dentro da rede local.","Ligo um endereço IP ao endereço físico (MAC).","Se mentirem em mim, alguém se passa pelo gateway."],a:"O porteiro que sabe quem mora em cada quarto. O ARP spoofing é a Poção Polissuco.",x:"9.1: respostas ARP falsas desviam o tráfego para o atacante."},
+{n:"ICMP (ping)",e:"🔔🚪🚪🚪",c:["Eu testo se alguém responde.","Sou o famoso ping.","Se me mandarem para a rede inteira em sequência, é uma varredura."],a:"Bater em todas as portas do corredor para ver quais abrem.",x:"9.1: ping para 192.0.2.1 até .254 mapeia quem existe na rede."},
+{n:"DHCP",e:"🛏️🗝️",c:["Entrego endereços a quem entra na rede.","Sou como a secretaria que distribui os quartos.","Um falso eu entrega rotas controladas pelo atacante."],a:"A secretaria que dá o número do quarto a cada aluno novo.",x:"9.1: um servidor DHCP falso leva o usuário para a rede do atacante."},
+{n:"NTP",e:"⏰🏰",c:["Eu sincronizo relógios.","Sem mim, os horários dos logs não batem.","Sem linha do tempo, ninguém reconstrói o ataque."],a:"O grande relógio da torre do castelo.",x:"9.1: logs de dispositivos diferentes só se encaixam com horários confiáveis."},
+{n:"NAT",e:"🧪👥",c:["Junto vários computadores em um único IP público.","No log do firewall, todos parecem ser o mesmo.","Só o meu registro de tradução diz qual computador foi."],a:"A Poção Polissuco: duzentos alunos com a mesma cara.",x:"9.2: o NAT esconde quem é quem de quem monitora."},
+{n:"HTTPS/TLS",e:"✉️🔒🦉",c:["Eu deixo o conteúdo ilegível no caminho.","O vigia vê o destino e o volume, mas não o conteúdo.","Protejo o usuário e atrapalho o monitoramento."],a:"A coruja com a carta lacrada.",x:"9.0 e 9.2: proteger e enxergar nem sempre andam juntos."},
+{n:"VPN",e:"📦✉️",c:["Meu tráfego viaja dentro de outro.","Eu crio um túnel.","O vigia vê o envelope de fora, mas não o que há dentro."],a:"Uma carta dentro de outra carta.",x:"9.2: túneis escondem o tráfego real de quem monitora."},
+{n:"Syslog",e:"📕🖋️",c:["Dispositivos me enviam mensagens de log.","Eu concentro os registros em um servidor central.","Se um dispositivo para de me enviar, desconfie."],a:"O livro de registros do castelo.",x:"9.1: o silêncio de um dispositivo também é uma pista."},
+{n:"NetFlow",e:"🗺️👣",c:["Eu resumo quem falou com quem, quando e quanto.","Não guardo o conteúdo das conversas.","Um volume enorme saindo de madrugada chama a minha atenção."],a:"O Mapa do Maroto: mostra quem passou, não o que disseram.",x:"10.3: dados de sessão e fluxo ajudam mesmo sem ver o conteúdo."},
+{n:"Captura de pacotes",e:"🎥🎙️",c:["Eu guardo tudo, inclusive o conteúdo.","Ocupo muito espaço de armazenamento.","Wireshark e tcpdump fazem esse trabalho."],a:"A gravação completa de uma conversa.",x:"10.1: mais detalhe significa mais espaço e menos tempo guardado."},
+{n:"Log do dispositivo final",e:"📒🖥️",c:["Eu registro o que acontece em um computador.","Tenho data e hora, origem, tipo de evento e usuário.","No Windows, me encontram no Visualizador de Eventos."],a:"O diário de bordo do porteiro.",x:"10.2: três falhas e um sucesso de login do mesmo IP sugerem senha adivinhada."},
+{n:"Alerta",e:"🔔🏰",c:["Eu aviso que algo suspeito aconteceu.","Tenho hora, origem, destino, portas e prioridade.","Venho de um IDS, de um firewall ou de um SIEM."],a:"O sino do castelo: diz onde, quando e por quê.",x:"11.1: o analista precisa ler a estrutura do alerta para decidir."},
+{n:"Falso negativo",e:"🫥🧙",c:["Havia um ataque acontecendo.","Ninguém foi avisado.","Sou o resultado mais perigoso da avaliação de alertas."],a:"O invasor de Capa da Invisibilidade passa e o sino fica mudo.",x:"11.2: sem alerta, ninguém sabe que o ataque aconteceu."},
+{n:"Falso positivo",e:"👻🔔",c:["O alerta tocou.","Mas não havia ameaça nenhuma.","Era só uma aluna que esqueceu a senha."],a:"O sino toca, mas era só o Pirraça.",x:"11.2: muitos falsos positivos cansam a equipe e escondem os alertas reais."}
+];
+const D=[
+{n:`DNS`,e:`📖🌐`,c:[`Maria digita o endereço do banco e abre uma página idêntica à do banco, mas que não é a dele. O endereço digitado estava correto.`,`O computador dela perguntou “a que endereço esse nome corresponde?” e recebeu uma resposta que não era a verdadeira.`,`O defeito não está no navegador nem no site: está no serviço que liga nomes a endereços IP.`],d:[`ARP`,`DHCP`,`HTTPS/TLS`],a:`A lista que o porteiro consulta para saber em que quarto cada aluno mora. Se alguém trocar a lista, você bate na porta errada achando que é a certa.`,s:{o:`O DNS traduz nomes (como banco.exemplo.com.br) em endereços IP. Os computadores se comunicam por IP, e o nome existe para facilitar a vida das pessoas.`,f:`O computador pergunta a um servidor DNS, recebe o IP e guarda a resposta por um tempo (cache). Se alguém altera essa resposta no servidor, no roteador, no cache ou no próprio computador, o nome certo leva a um destino errado.`,x:`O roteador da casa de Maria ainda usa a senha de fábrica, e alguém troca o DNS configurado nele. Todos os aparelhos da casa passam a ser levados a cópias de sites.`,g:`As consultas DNS mostram o que cada máquina tentou acessar, por isso são uma fonte valiosa de monitoramento. Nomes enormes e sem sentido, em grande volume, podem indicar um túnel de DNS.`,l:`O DNS comum não confirma que a resposta é verdadeira. O HTTPS ajuda, porque o navegador avisa quando o certificado não corresponde ao nome, mas a pessoa precisa dar atenção ao aviso.`}},
+{n:`ARP`,e:`🎭🚪`,c:[`Em uma rede local, o computador de Ana passa a enviar tudo o que é dela para um aparelho que não é o roteador.`,`Esse aparelho avisou a rede: “o endereço IP do roteador agora corresponde a mim”, e os outros computadores acreditaram.`,`Isso só acontece dentro da mesma rede local, onde endereços IP são ligados a endereços físicos (MAC).`],d:[`DNS`,`DHCP`,`ICMP (ping)`],a:`Alguém se passa pelo porteiro com a Poção Polissuco, e todos entregam as cartas a ele.`,s:{o:`O ARP descobre qual endereço físico (MAC) corresponde a um IP dentro da rede local. É por esse endereço que os dados chegam ao aparelho certo.`,f:`Um computador pergunta a todos “quem tem o IP tal?”, o dono responde com o seu MAC e a resposta fica guardada em uma tabela. Como o ARP não confere quem responde, uma resposta falsa pode substituir a verdadeira (ARP spoofing).`,x:`Em uma rede Wi-Fi compartilhada, um aparelho responde em nome do roteador. O tráfego dos outros passa por ele antes de seguir para a internet.`,g:`Sinais no monitoramento: o mesmo endereço MAC aparecendo para vários IPs, ou muitas respostas ARP que ninguém pediu. Switches com inspeção de ARP e redes bem segmentadas reduzem o risco.`,l:`O HTTPS limita o que o atacante consegue ler no meio do caminho, mas não impede o desvio. A defesa precisa estar na própria rede local.`}},
+{n:`DHCP`,e:`🛏️🗝️`,c:[`Um notebook conecta ao Wi-Fi da escola e mostra “conectado”, mas nenhum site abre.`,`Ao verificar, o endereço dele começa com 169.254, que o próprio sistema cria quando ninguém lhe entrega configuração.`,`Faltou o serviço que distribui automaticamente endereço IP, máscara, gateway e DNS.`],d:[`DNS`,`ARP`,`Firewall`],a:`A secretaria que entrega a chave e o número do quarto a cada aluno novo. Sem ela, o aluno chega e não sabe para onde ir.`,s:{o:`O DHCP entrega a configuração de rede para quem acaba de conectar: endereço IP, máscara, gateway e servidores DNS.`,f:`O computador pede configuração, um servidor oferece, o computador aceita e o servidor confirma. O endereço é emprestado por um tempo e depois renovado.`,x:`O servidor DHCP da escola travou. Os notebooks novos conectam ao Wi-Fi, mas não conseguem se comunicar com mais ninguém.`,g:`Um servidor DHCP falso pode entregar um gateway e um DNS do atacante, desviando o tráfego de quem se conecta. Switches com DHCP snooping aceitam respostas só de servidores autorizados.`,l:`O DHCP não autentica quem responde primeiro: quem responde mais rápido pode ganhar. E ele só entrega configuração, não protege nada além disso.`}},
+{n:`HTTPS/TLS`,e:`✉️🔒🦉`,c:[`O navegador mostra o cadeado, e mesmo assim a página foi montada para roubar senhas.`,`A conexão entre você e aquele site está de fato cifrada: ninguém no caminho lê o que você digita.`,`O que o cadeado garante é a proteção do caminho e o domínio do site, não a honestidade de quem o controla.`],d:[`VPN`,`Firewall`,`DNS`],a:`A coruja com a carta lacrada: ninguém a abre no caminho, mas isso não diz nada sobre quem a escreveu.`,s:{o:`O HTTPS é o HTTP protegido pelo TLS: a conversa entre navegador e site é cifrada, e o site apresenta um certificado que prova que o domínio é dele.`,f:`O navegador e o site combinam chaves, cifram a conversa, e o navegador confere o certificado. Se o certificado não corresponde ao domínio, aparece um aviso.`,x:`Alguém registra banco-exemplo.com, parecido com o endereço do banco, e instala um certificado para esse domínio. O cadeado aparece, mas o site é falso.`,g:`Para o monitoramento, o conteúdo fica ilegível, mas ainda se vê o destino e o volume da conexão. O phishing com cadeado mostra que cifrar não é o mesmo que confiar.`,l:`O HTTPS não diz se o site é honesto, apenas que o caminho está protegido e o domínio é aquele. Confira o endereço escrito, e não apenas o cadeado.`}},
+{n:`VPN`,e:`📦✉️`,c:[`Um funcionário em casa precisa abrir o sistema interno da empresa, que não é acessível pela internet.`,`O tráfego dele viaja dentro de um túnel cifrado até a rede da empresa, como uma carta dentro de outra carta.`,`O notebook dele está infectado, e o túnel leva o problema junto para dentro da empresa.`],d:[`HTTPS/TLS`,`Firewall`,`NAT`],a:`A passagem secreta que liga a casa do aluno à torre da escola: protege o caminho, mas leva para dentro quem a atravessa.`,s:{o:`A VPN cria um túnel cifrado entre o dispositivo e a rede da empresa, fazendo o computador se comportar como se estivesse dentro dela.`,f:`O dispositivo se autentica, o tráfego é cifrado e encapsulado dentro de outra conexão e chega à rede da empresa, onde segue como se fosse interno.`,x:`Uma funcionária em viagem usa a VPN para acessar o sistema de pedidos. Em uma rede de hotel, quem observa o Wi-Fi vê apenas dados cifrados.`,g:`Quem monitora a rede no caminho não enxerga o que passa dentro do túnel. Por isso a empresa precisa de bons logs na entrada da VPN e de MFA para evitar o uso de credenciais roubadas.`,l:`A VPN protege o caminho, não o dispositivo. Um notebook infectado ou uma senha roubada continuam sendo um problema, só que agora com acesso à rede interna.`}},
+{n:`Syslog`,e:`📕🖋️`,c:[`Às 02:10, o firewall registra várias tentativas bloqueadas de um IP externo. Às 02:14, um servidor registra falhas de login e depois um sucesso. Às 02:20, o proxy registra um envio grande para fora.`,`Cada registro, sozinho, parece banal. Juntos, contam a história de uma invasão.`,`Para juntá-los, os equipamentos enviam suas mensagens de log a um mesmo servidor central, em um formato padronizado.`],d:[`NetFlow`,`NTP`,`Captura de pacotes`],a:`O livro de registros do castelo: cada porteiro anota o que viu, e o diretor lê todas as páginas juntas.`,s:{o:`O syslog é um padrão para equipamentos enviarem suas mensagens de log (eventos, erros, acessos) a um servidor central.`,f:`Cada dispositivo gera mensagens com data, origem, tipo e gravidade, e as envia a um coletor. No coletor, a equipe pesquisa e cruza os registros de dispositivos diferentes.`,x:`A sequência de 02:10, 02:14 e 02:20 só faz sentido se alguém vir os três registros lado a lado, e para isso eles precisam estar no mesmo lugar.`,g:`Com logs centralizados, apagar o log local não esconde o ataque. Se um equipamento para de enviar mensagens, isso também é um sinal a investigar.`,l:`O syslog só vale se os relógios estiverem sincronizados (NTP), senão a ordem dos eventos se perde. Ele registra o que o equipamento decide registrar, não o conteúdo do tráfego.`}},
+{n:`NetFlow`,e:`🗺️👣`,c:[`Um servidor que costuma enviar cerca de 200 MB por dia para fora enviou 38 GB, de madrugada, para um único destino.`,`Sabemos quem falou com quem, quando e quanto. Não sabemos o que foi dito.`,`O registro é um resumo das conversas, não a gravação delas.`],d:[`Captura de pacotes`,`Syslog`,`Alerta de IDS`],a:`O Mapa do Maroto: mostra quem passou por onde e por quanto tempo, mas não ouve a conversa.`,s:{o:`O NetFlow registra um resumo de cada conversa na rede: origem, destino, portas, horários e quantidade de dados.`,f:`O equipamento de rede agrupa os pacotes de uma mesma conversa em um registro e envia esse resumo a um coletor. O conteúdo dos pacotes não é guardado.`,x:`Os números são ilustrativos: comparado ao comportamento normal do servidor, o volume de 38 GB à noite é um desvio claro, mesmo sem saber o conteúdo.`,g:`Como não depende de ver o conteúdo, o NetFlow continua útil com tráfego cifrado. Serve para achar saída de dados incomum, varreduras e comunicação com destinos suspeitos.`,l:`O NetFlow não prova o que foi enviado, só que houve a conversa e qual foi o volume. Para ver o conteúdo é preciso captura de pacotes, que ocupa muito espaço e, com HTTPS, mostra dados cifrados.`}},
+{n:`Falso negativo`,e:`🫥🧙`,c:[`Um ataque real aconteceu na rede ontem à noite.`,`Nenhum alerta foi gerado, então ninguém investigou.`,`O painel da equipe estava limpo, e foi isso que deu uma falsa tranquilidade.`],d:[`Falso positivo`,`Verdadeiro negativo`,`Verdadeiro positivo`],a:`O invasor passa pelo portão com a Capa da Invisibilidade, e o sino fica mudo.`,s:{o:`Falso negativo é quando existe uma ameaça real e o sistema não gera alerta.`,f:`Acontece quando nenhuma regra reconhece o ataque, quando ele está escondido (por exemplo, em tráfego cifrado) ou quando o dispositivo de detecção não via aquele trecho da rede. Como não há alerta, só se descobre depois, por outros sinais.`,x:`Um invasor usa uma senha roubada e acessa o sistema em horário comercial. Nenhuma regra dispara, porque o acesso parece normal.`,g:`É o resultado mais perigoso, porque a equipe acredita que está tudo bem. Para reduzir: várias fontes de dados, regras revisadas com frequência e busca ativa por comportamentos fora do normal.`,l:`Nenhum sistema está livre de falsos negativos. E o oposto, o falso positivo (alerta sem ameaça), também é um problema: alertas demais cansam a equipe, que passa a ignorar os sinais. Ajustar as regras é achar o equilíbrio.`}}
+];
+let G;
+function start(){
+ app.innerHTML='<h1>🦉 Quem Sou Eu?</h1><h2>Os Vigias de Hogwarts</h2><p style="text-align:center">Módulos 9, 10 e 11: protocolos, logs e alertas</p><div class="card"><p><b>Como jogar</b></p><p>Leia as dicas e descubra quem eu sou. Quanto menos dicas você precisar, mais pontos ganha: 3, 2 ou 1. No fim, o castelo mostra a analogia de cada um.</p></div><div class="row"><button class="btn" data-m="solo">Jogar sozinha(o)</button><button class="btn alt" data-m="team">Duas equipes</button></div>';
+ app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{G={m:b.dataset.m,r:shuffle(D),i:0,k:1,s:[0,0],t:0,h:0};round()});
+}
+function round(){
+ const q=G.r[G.i];
+ if(!G.o)G.o=shuffle([q.n,...q.d]);
+ const who=G.m==="team"?'<div class="who">Vez da '+TN[G.t]+'</div>':"";
+ const sc=G.m==="team"?TN[0].split(" ")[1]+" "+G.s[0]+" x "+G.s[1]+" "+TN[1].split(" ")[1]:"Pontos: "+G.s[0];
+ app.innerHTML='<div class="bar"><span>Pergunta '+(G.i+1)+' de '+G.r.length+'</span><span>'+sc+'</span></div>'+who+'<h2>Quem sou eu?</h2>'+q.c.slice(0,G.k).map((c,j)=>'<div class="clue"><b>Dica '+(j+1)+':</b> '+c+'</div>').join("")+(G.k<3?'<button class="btn alt" id="mk" style="width:100%">Mais uma dica (vale menos)</button>':"")+'<div class="opts">'+G.o.map(o=>'<button class="opt">'+o+'</button>').join("")+'</div>';
+ const mk=$("#mk");if(mk)mk.onclick=()=>{G.k++;round()};
+ app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  const ok=b.textContent===q.n,p=ok?4-G.k:0;
+  G.s[G.t]+=p;if(ok)G.h++;
+  app.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===q.n)x.classList.add("ok");else if(x===b)x.classList.add("no")});
+  setTimeout(()=>reveal(q,ok,p),700);
+ });
+}
+function reveal(q,ok,p){
+ app.innerHTML='<div class="bar"><span>Pergunta '+(G.i+1)+' de '+G.r.length+'</span></div><div class="scene" aria-hidden="true">'+q.e+'</div><h2>Eu sou: '+q.n+'</h2><div class="pts '+(ok?"g":"b")+'">'+(ok?"Acertou! +"+p+" ponto"+(p>1?"s":""):"Quase! Dessa vez 0 ponto.")+'</div><div class="card"><p><b>O que é.</b> '+q.s.o+'</p><p><b>Como funciona.</b> '+q.s.f+'</p><p><b>Exemplo (hipotético).</b> '+q.s.x+'</p><p><b>Segurança.</b> '+q.s.g+'</p><p><b>Limites e cuidados.</b> '+q.s.l+'</p><p><b>🪄 Em Hogwarts.</b> '+q.a+'</p></div><button class="btn" id="nx" style="width:100%">'+(G.i===G.r.length-1?"Ver resultado":"Próxima")+'</button>';
+ $("#nx").onclick=()=>{G.i++;G.k=1;G.o=null;if(G.m==="team")G.t=1-G.t;G.i===G.r.length?end():round()};
+}
+function end(){
+ let top;
+ if(G.m==="team"){const a=G.s[0],b=G.s[1];top=a===b?"Empate! As duas equipes protegeram o castelo.":"Vitória da "+TN[a>b?0:1]+"!"}
+ else top=G.h>=7?"Auror-Chefe":G.h>=5?"Vigia do Castelo":"Aprendiz de Vigia";
+ const sc=G.m==="team"?G.s[0]+" x "+G.s[1]:G.s[0]+" de "+G.r.length*3+" pontos";
+ app.innerHTML='<div class="scene">🏆</div><h1>'+top+'</h1><p class="pts g">'+sc+'</p><h2>Revisão do castelo</h2><div class="card">'+G.r.map(q=>'<div class="rv"><span>'+q.e.slice(0,2)+'</span><span><b>'+q.n+'</b><small>'+q.a+'</small></span></div>').join("")+'</div><div class="row"><button class="btn" id="a">Jogar de novo</button><button class="btn alt" id="m">Início</button></div>';
+ $("#a").onclick=()=>{G={m:G.m,r:shuffle(D),i:0,k:1,s:[0,0],t:0,h:0};round()};
+ $("#m").onclick=start;
+}
+start();
+</script>
+</body>
+</html>
